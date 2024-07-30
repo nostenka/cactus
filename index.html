@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кактус Раш</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+    <canvas id="gameCanvas" style="display: none;"></canvas>
+    <div id="resultScreen" style="display: none;">
+        <h1>Игра окончена!</h1>
+        <p>Ваш счёт: <span id="finalScore"></span></p>
+        <button id="restartButton">Начать заново</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
