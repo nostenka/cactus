@@ -124,7 +124,7 @@ function drawScore() {
     ctx.font = '36px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`${score}`, canvas.width / 2, canvas.height / 2 - 300);  // Отображение счётчика выше
+    ctx.fillText(`${score}`, canvas.width / 2, canvas.height / 2 - 200);  // Отображение счётчика выше
 }
 
 function resetGame() {
