@@ -12,7 +12,7 @@ const character = {
     height: 100,  // Увеличен размер персонажа
     dy: 0,
     gravity: 1,
-    jumpPower: -25,  // Увеличена сила прыжка персонажа
+    jumpPower: -23,  // Увеличена сила прыжка персонажа
     onGround: true,
     img: new Image(),
     imgSrc: 'images/character.gif',
@@ -82,7 +82,7 @@ function drawCactus(cactus) {
 
 function updateCacti(deltaTime) {
     if (frame % 150 === 0) {  // Увеличен интервал появления кактусов
-        const cactusHeight = 60 + Math.random() * 20;  // Средняя высота кактусов
+        const cactusHeight = 60 + Math.random() * 40;  // Средняя высота кактусов
         const cactusWidth = 50;  // Увеличена ширина кактусов
         cacti.push({
             x: canvas.width,
@@ -117,6 +117,14 @@ function drawGround() {
     // Рисуем горизонт выше уровня с песком
     ctx.fillStyle = '#8B4513';  // Цвет горизонта (например, коричневый)
     ctx.fillRect(0, canvas.height - groundHeight, canvas.width, groundHeight - sandHeight);
+}
+
+function drawScore() {
+    ctx.fillStyle = '#000';  // Цвет текста (черный)
+    ctx.font = '36px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${score}`, canvas.width / 2, canvas.height / 2 - 300);  // Отображение счётчика выше
 }
 
 function resetGame() {
@@ -154,6 +162,7 @@ function gameLoop(timestamp) {
         character.update(deltaTime);
         character.draw();
         updateCacti(deltaTime);
+        drawScore();  // Отображение счётчика
         cacti.forEach(cactus => drawCactus(cactus));
         frame++;
         requestAnimationFrame(gameLoop);
