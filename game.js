@@ -120,11 +120,14 @@ function drawGround() {
 }
 
 function drawScore() {
+    const scoreFontSize = 36;  // Размер шрифта для счётчика
     ctx.fillStyle = '#000';  // Цвет текста (черный)
-    ctx.font = '36px Arial';
+    ctx.font = `${scoreFontSize}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`${score}`, canvas.width / 2, canvas.height / 2 - 100);  // Отображение счётчика выше
+
+    // Отображение счётчика немного выше центра экрана
+    ctx.fillText(`${score}`, canvas.width / 2, canvas.height / 2 - 100);
 }
 
 function resetGame() {
