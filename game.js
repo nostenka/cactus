@@ -11,8 +11,8 @@ const character = {
     width: 100,  // Увеличен размер персонажа
     height: 100,  // Увеличен размер персонажа
     dy: 0,
-    gravity: 0.9,
-    jumpPower: -26,  // Увеличена сила прыжка персонажа
+    gravity: 1,
+    jumpPower: -25,  // Увеличена сила прыжка персонажа
     onGround: true,
     img: new Image(),
     imgSrc: 'images/character.gif',
@@ -28,9 +28,9 @@ const character = {
         }
     },
 
-    update() {
-        this.dy += this.gravity;
-        this.y += this.dy;
+    update(deltaTime) {
+        this.dy += this.gravity * (deltaTime / 16.67);  // Нормализация гравитации
+        this.y += this.dy * (deltaTime / 16.67);  // Нормализация скорости падения
         if (this.y + this.height >= canvas.height - groundHeight) {
             this.y = canvas.height - groundHeight - this.height;
             this.dy = 0;
@@ -55,7 +55,8 @@ character.img.onload = function() {
     resizeCanvas();
     document.getElementById('preloader').style.display = 'none';
     document.getElementById('gameCanvas').style.display = 'block';
-    gameLoop();
+    lastTime = performance.now();
+    gameLoop(lastTime);
 };
 
 character.img.onerror = function() {
@@ -79,10 +80,10 @@ function drawCactus(cactus) {
     ctx.drawImage(cactusImg, cactus.x, cactus.y, cactus.width, cactus.height);
 }
 
-function updateCacti() {
+function updateCacti(deltaTime) {
     if (frame % 150 === 0) {  // Увеличен интервал появления кактусов
-        const cactusHeight = 80 + Math.random() * 20;  // Уменьшена высота кактусов
-        const cactusWidth = 80;  // Уменьшена ширина кактусов
+        const cactusHeight = 60 + Math.random() * 20;  // Средняя высота кактусов
+        const cactusWidth = 50;  // Увеличена ширина кактусов
         cacti.push({
             x: canvas.width,
             y: canvas.height - groundHeight - cactusHeight,
@@ -92,7 +93,7 @@ function updateCacti() {
     }
 
     cacti.forEach((cactus, index) => {
-        cactus.x -= 5;
+        cactus.x -= 5 * (deltaTime / 16.67);  // Нормализация скорости перемещения кактусов
         if (cactus.x + cactus.width < 0) {
             cacti.splice(index, 1);
             score++;
@@ -128,10 +129,13 @@ function resetGame() {
     gameOver = false;
     document.getElementById('gameCanvas').style.display = 'block';
     document.getElementById('resultScreen').style.display = 'none';
-    gameLoop();
+    lastTime = performance.now();
+    gameLoop(lastTime);
 }
 
-function gameLoop() {
+let lastTime = 0;
+
+function gameLoop(timestamp) {
     if (gameOver) {
         if (score > highScore) {
             highScore = score;
@@ -142,11 +146,14 @@ function gameLoop() {
         document.getElementById('gameCanvas').style.display = 'none';
         document.getElementById('resultScreen').style.display = 'flex';
     } else {
+        const deltaTime = timestamp - lastTime;
+        lastTime = timestamp;
+        
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawGround();
-        character.update();
+        character.update(deltaTime);
         character.draw();
-        updateCacti();
+        updateCacti(deltaTime);
         cacti.forEach(cactus => drawCactus(cactus));
         frame++;
         requestAnimationFrame(gameLoop);
