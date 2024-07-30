@@ -11,8 +11,8 @@ const character = {
     width: 100,  // Увеличен размер персонажа
     height: 100,  // Увеличен размер персонажа
     dy: 0,
-    gravity: 1,
-    jumpPower: -30,  // Увеличена сила прыжка персонажа
+    gravity: 0.9,
+    jumpPower: -26,  // Увеличена сила прыжка персонажа
     onGround: true,
     img: new Image(),
     imgSrc: 'images/character.gif',
