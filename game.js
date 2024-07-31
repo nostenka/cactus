@@ -45,25 +45,33 @@ let gameOver = false;
 let highScore = parseInt(localStorage.getItem('highScore'), 10) || 0;
 
 const cactusImg = new Image();
-cactusImg.src = 'images/cactus.png';
-
-character.img.src = character.imgSrc;
-character.img.onload = () => {
-    console.log("Character image loaded successfully");
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    showScreen('startScreen');
-    document.getElementById('preloader').style.display = 'none';
+const characterImages = {
+    'images/character1.gif': new Image(),
+    'images/character2.gif': new Image(),
 };
 
-character.img.onerror = () => console.error("Failed to load character image");
-cactusImg.onload = () => console.log("Cactus image loaded successfully");
-cactusImg.onerror = () => console.error("Failed to load cactus image");
+cactusImg.src = 'images/cactus.png';
+characterImages['images/character1.gif'].src = 'images/character1.gif';
+characterImages['images/character2.gif'].src = 'images/character2.gif';
+
+function preloadImages(images, callback) {
+    let loadedImages = 0;
+    const totalImages = Object.keys(images).length;
+
+    for (const src in images) {
+        images[src].onload = () => {
+            if (++loadedImages >= totalImages) {
+                callback();
+            }
+        };
+        images[src].onerror = () => console.error(`Failed to load image: ${src}`);
+    }
+}
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    character.y = canvas.height - groundHeight - 100; // Correct character position on resize
+    character.y = canvas.height - groundHeight - character.height;
 }
 
 function showScreen(screenId) {
@@ -89,10 +97,11 @@ function updateCacti(deltaTime) {
         });
     }
 
-    cacti.forEach((cactus, index) => {
+    for (let i = cacti.length - 1; i >= 0; i--) {
+        const cactus = cacti[i];
         cactus.x -= 5 * (deltaTime / 16.67);
         if (cactus.x + cactus.width < 0) {
-            cacti.splice(index, 1);
+            cacti.splice(i, 1);
             score++;
         }
         if (
@@ -103,7 +112,7 @@ function updateCacti(deltaTime) {
         ) {
             gameOver = true;
         }
-    });
+    }
 }
 
 function drawGround() {
@@ -116,7 +125,7 @@ function drawGround() {
 
 function drawScore() {
     ctx.fillStyle = '#000';
-    ctx.font = '36px Arial';
+    ctx.font = 'bold 36px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(`Счёт: ${score}`, canvas.width / 2, 50); // Position the score at the top
@@ -126,7 +135,7 @@ function resetGame() {
     cacti.length = 0;
     frame = 0;
     score = 0;
-    character.y = canvas.height - groundHeight - 100;
+    character.y = canvas.height - groundHeight - character.height;
     character.dy = 0;
     character.onGround = true;
     gameOver = false;
@@ -195,7 +204,6 @@ document.getElementById('character2').addEventListener('click', () => {
 document.getElementById('confirmCharacterButton').addEventListener('click', () => {
     character.imgSrc = selectedCharacter;
     character.img.src = character.imgSrc;
-    // Ensure the image is loaded before starting the game
     character.img.onload = () => {
         showScreen('gameCanvas');
         lastTime = performance.now();
@@ -204,3 +212,12 @@ document.getElementById('confirmCharacterButton').addEventListener('click', () =
 });
 
 document.getElementById('highScore').innerText = `Рекорд: ${highScore}`;
+
+// Initial preload and setup
+preloadImages(characterImages, () => {
+    console.log("All images loaded successfully");
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    showScreen('startScreen');
+    document.getElementById('preloader').style.display = 'none';
+});
