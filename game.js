@@ -17,6 +17,7 @@ const character = {
     imgSrc: 'images/character1.gif',
 
     draw() {
+        // Отрисовка изображения персонажа
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     },
 
@@ -45,33 +46,25 @@ let gameOver = false;
 let highScore = parseInt(localStorage.getItem('highScore'), 10) || 0;
 
 const cactusImg = new Image();
-const characterImages = {
-    'images/character1.gif': new Image(),
-    'images/character2.gif': new Image(),
-};
-
 cactusImg.src = 'images/cactus.png';
-characterImages['images/character1.gif'].src = 'images/character1.gif';
-characterImages['images/character2.gif'].src = 'images/character2.gif';
 
-function preloadImages(images, callback) {
-    let loadedImages = 0;
-    const totalImages = Object.keys(images).length;
-
-    for (const src in images) {
-        images[src].onload = () => {
-            if (++loadedImages >= totalImages) {
-                callback();
-            }
-        };
-        images[src].onerror = () => console.error(`Failed to load image: ${src}`);
-    }
-}
+// Установка изображения персонажа и обработка загрузки
+character.img.src = character.imgSrc;
+character.img.onload = () => {
+    console.log("Character image loaded successfully");
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    showScreen('startScreen');
+    document.getElementById('preloader').style.display = 'none';
+};
+character.img.onerror = () => console.error("Failed to load character image");
+cactusImg.onload = () => console.log("Cactus image loaded successfully");
+cactusImg.onerror = () => console.error("Failed to load cactus image");
 
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    character.y = canvas.height - groundHeight - character.height;
+    character.y = canvas.height - groundHeight - 100; // Корректировка позиции персонажа при изменении размера
 }
 
 function showScreen(screenId) {
@@ -97,11 +90,10 @@ function updateCacti(deltaTime) {
         });
     }
 
-    for (let i = cacti.length - 1; i >= 0; i--) {
-        const cactus = cacti[i];
+    cacti.forEach((cactus, index) => {
         cactus.x -= 5 * (deltaTime / 16.67);
         if (cactus.x + cactus.width < 0) {
-            cacti.splice(i, 1);
+            cacti.splice(index, 1);
             score++;
         }
         if (
@@ -112,30 +104,30 @@ function updateCacti(deltaTime) {
         ) {
             gameOver = true;
         }
-    }
+    });
 }
 
 function drawGround() {
-    ctx.fillStyle = '#C2B280'; // Sand color
+    ctx.fillStyle = '#C2B280'; // Цвет песка
     ctx.fillRect(0, canvas.height - sandHeight, canvas.width, sandHeight);
 
-    ctx.fillStyle = '#8B4513'; // Ground color
+    ctx.fillStyle = '#8B4513'; // Цвет земли
     ctx.fillRect(0, canvas.height - groundHeight, canvas.width, groundHeight - sandHeight);
 }
 
 function drawScore() {
     ctx.fillStyle = '#000';
-    ctx.font = 'bold 36px Arial';
+    ctx.font = '36px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(`Счёт: ${score}`, canvas.width / 2, 50); // Position the score at the top
+    ctx.fillText(`Счёт: ${score}`, canvas.width / 2, 50); // Позиция счёта сверху
 }
 
 function resetGame() {
     cacti.length = 0;
     frame = 0;
     score = 0;
-    character.y = canvas.height - groundHeight - character.height;
+    character.y = canvas.height - groundHeight - 100;
     character.dy = 0;
     character.onGround = true;
     gameOver = false;
@@ -212,12 +204,3 @@ document.getElementById('confirmCharacterButton').addEventListener('click', () =
 });
 
 document.getElementById('highScore').innerText = `Рекорд: ${highScore}`;
-
-// Initial preload and setup
-preloadImages(characterImages, () => {
-    console.log("All images loaded successfully");
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    showScreen('startScreen');
-    document.getElementById('preloader').style.display = 'none';
-});
