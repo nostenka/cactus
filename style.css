@@ -8,23 +8,28 @@ body {
     align-items: center;
     height: 100vh;
     flex-direction: column;
+    position: relative;
 }
 
-canvas {
-    display: block;
-    background-color: #87ceeb;
-}
-
-#preloader {
-    position: fixed;
+#preloader,
+#startScreen,
+#characterSelectionScreen,
+#resultScreen,
+#gameCanvas {
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #87ceeb;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
+}
+
+#preloader {
+    background-color: #87ceeb;
+    display: flex;
+    z-index: 1000;
 }
 
 .loader {
@@ -41,26 +46,27 @@ canvas {
     100% { transform: rotate(360deg); }
 }
 
+#startScreen,
+#characterSelectionScreen,
 #resultScreen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     background-color: rgba(255, 255, 255, 0.9);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-#resultScreen h1 {
-    margin: 0 0 10px;
+#gameCanvas {
+    z-index: 10;
+    display: block;
 }
 
-#resultScreen p {
-    margin: 0 0 20px;
-}
-
-#restartButton {
+button {
     padding: 10px 20px;
     border: none;
     background-color: #3498db;
@@ -69,8 +75,33 @@ canvas {
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s;
+    margin: 10px 0;
 }
 
-#restartButton:hover {
+button:hover {
     background-color: #2980b9;
+}
+
+.character-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.character-option {
+    margin: 0 10px;
+}
+
+.character-option img {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: border-color 0.3s;
+}
+
+.character-option img.selected {
+    border-color: #3498db;
 }
