@@ -12,7 +12,7 @@ body {
     position: relative;
 }
 
-/* Стили для разных экранов */
+/* Стили для различных экранов */
 #preloader,
 #startScreen,
 #characterSelectionScreen,
@@ -108,6 +108,23 @@ button:hover {
 
 .character-option img.selected {
     border-color: #3498db;
+}
+
+/* Центрирование текста и кнопок на мобильных устройствах */
+#startScreen h1,
+#characterSelectionScreen h1,
+#resultScreen h1,
+#startScreen button,
+#characterSelectionScreen button,
+#resultScreen button {
+    text-align: center;
+}
+
+#startScreen p,
+#characterSelectionScreen p,
+#resultScreen p {
+    text-align: center;
+    margin: 10px 0;
 }
 
 /* Адаптивные стили для различных устройств */
